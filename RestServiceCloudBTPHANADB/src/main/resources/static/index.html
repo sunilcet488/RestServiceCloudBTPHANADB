@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Sprint Boot microservices</title>
+	<script
+		id="sap-ui-bootstrap"
+		src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-bindingSyntax="complex"
+		data-sap-ui-resourceroots='{
+			 "myFirstApp" : "./" 
+		}'>
+
+	</script>
+	
+	<script>
+/*		var oBtn = new sap.m.Button({
+			text :"Click me",
+			press : function(){
+				alert("Welcome to Microservices");
+			}
+		});
+		oBtn.placeAt("content"); */
+		
+		
+		var oView = new sap.ui.view({
+			viewName :"myFirstApp.view.App",
+			type:"XML"
+		});
+		
+		var oMainView = new sap.ui.view({
+			viewName :"myFirstApp.view.Main",
+			type:"XML"
+		});		
+		
+		oView.byId("idApp").addPage(oMainView);
+		
+		oView.placeAt("content");
+		
+	</script>
+	
+</head>
+<body class="sapUiBody">
+
+<div id="content"></div>
+
+</body>
+</html>
