@@ -1,6 +1,8 @@
 package com.abapskill.configuration;
 
 import javax.sql.DataSource;
+
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.config.java.AbstractCloudConfig;
@@ -10,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import com.zaxxer.hikari.HikariDataSource;
 
-
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,6 +52,23 @@ public class DatabaseConfig extends AbstractCloudConfig {
      * (Step 1) Parses the local environment variable VCAP_SERVICES (containing cloud information) and provides a
      * DataSource. The superclass {@link AbstractCloudConfig}, part of the Spring Cloud plugin, is used for this.
      */
+	
+	@Value("${vcap.services.hdi_schema.credentials.user}")
+	private String username;
+
+	@Value("${vcap.services.hdi_schema.credentials.password}")
+	private String password;
+
+	@Value("${vcap.services.hdi_schema.credentials.url}")
+	private String hostname;
+
+	@Value("${vcap.services.hdi_schema.credentials.port}")
+	private String port;
+
+	@Value("${vcap.services.hdi_schema.credentials.schema}")
+	private String schemaname;
+	
+	
     @Bean
     public DataSource dataSource() {
         /*
@@ -57,11 +76,34 @@ public class DatabaseConfig extends AbstractCloudConfig {
          * for a detailled discussion of this issue:
          * https://stackoverflow.com/questions/36885891/jpa-eclipselink-understanding-classloader-issues
          */
+    	
+//    	Logger cloudFoundryDataSourceConfigLogger = LoggerFactory.
+    	
         List<String> dataSourceNames = Arrays.asList("BasicDbcpPooledDataSourceCreator",
                 "TomcatJdbcPooledDataSourceCreator", "HikariCpPooledDataSourceCreator",
                 "TomcatDbcpPooledDataSourceCreator");
         DataSourceConfig dbConfig = new DataSourceConfig(dataSourceNames);
-        return connectionFactory().dataSource(dbConfig);
+        
+        DataSource myConnection = DataSourceBuilder.create()
+                .type(HikariDataSource.class)
+                .driverClassName("com.sap.db.jdbc.Driver")
+                .url(hostname)
+                .username(username)
+                .password(password)
+                .build();
+        
+       try {
+    	   myConnection.getConnection().setSchema(schemaname);
+       }catch (SQLException e) {
+		// TODO: handle exception
+       }
+        
+
+        
+//        cloudFoundryDataSourceConfigLogger
+        
+        
+        return myConnection;
     }
 
     /**
