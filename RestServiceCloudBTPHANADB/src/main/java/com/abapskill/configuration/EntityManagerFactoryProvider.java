@@ -43,7 +43,7 @@ public class EntityManagerFactoryProvider {
     private static Map<String, Object> getJPAProperties(ClassLoader classLoader) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put(DDL_GENERATION, DROP_AND_CREATE);
+        properties.put(DDL_GENERATION, CREATE_OR_EXTEND);
         properties.put(DDL_GENERATION_MODE, DDL_DATABASE_GENERATION);
         properties.put(CLASSLOADER, classLoader);
         properties.put(LOGGING_LEVEL, "INFO"); // "FINE" provides more details
